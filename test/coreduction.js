@@ -189,3 +189,40 @@ exports["test reducibles stop on right error"] = test(function(assert) {
 
   assert.ok(e1.isReduced, "next yield stops left")
 })
+
+exports["test manual assembly"] = test(function(assert) {
+  var e1 = event()
+  var e2 = event()
+  var e3 = event()
+
+  var actual = concat(coreduction(e1, e2, function(left, right) {
+    return left + " : " + right
+  }), e3)
+
+  assert(actual, [
+    "l3 : r1",
+    "l3 : r2",
+    "l4 : r2",
+    "l5 : r2",
+    "l5 : r3"
+  ], "values assembled via assembly function")
+
+  e1.send("l1")
+  e1.send("l2")
+  e1.send("l3")
+  e2.send("r1")
+  e2.send("r2")
+  e1.send("l4")
+  e1.send("l5")
+  e2.send("r3")
+  e2.send(end)
+
+  assert.ok(e2.isReduced, "right is reduced")
+  assert.ok(!e1.isReduced, "left is not reduced")
+
+  e1.send("l6")
+
+  assert.ok(e1.isReduced, "next yield stops left")
+
+  e3.send(end)
+})
