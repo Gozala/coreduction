@@ -10,13 +10,17 @@ var reduce = require("reducible/reduce")
 // Special value indicating that no value has being aggregated.
 var nil = new String("Indication of no value")
 
-function coreduction(left, right) {
+function coreduction(left, right, assemble) {
   /**
   Takes two reducibles and returns reducible of pairs, where each item from
   either input is paired with a last item from the other. This of course means
   that items from both left and right side may repeat many times. Result ends
-  once either of the inputs end.
+  once either of the inputs end. Optionally `assemble` function may be passed
+  as a third argument in which case it will be invoked with pairs as arguments
+  to produce values of the resulting reducible.
   **/
+
+  assemble = typeof(assemble) === "function" ? assemble : Array
   return reducible(function reduceCoupled(next, initial) {
     var result
     var state = initial
@@ -44,7 +48,7 @@ function coreduction(left, right) {
         // If both reducibles yielded already values couple last ones
         // and pass it down the flow.
         if (leftValue !== nil && rightValue !== nil) {
-          state = next([leftValue, rightValue], state)
+          state = next(assemble(leftValue, rightValue), state)
 
           // If reduction is complete store result to stop the other reducible.
           if (isReduced(state)) result = state
