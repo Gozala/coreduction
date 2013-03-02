@@ -15,7 +15,7 @@ function coreduction(left, right, assemble) {
   Takes two reducibles and returns reducible of pairs, where each item from
   either input is paired with a last item from the other. This of course means
   that items from both left and right side may repeat many times. Result ends
-  once either of the inputs end. Optionally `assemble` function may be passed
+  once both of the inputs end. Optionally `assemble` function may be passed
   as a third argument in which case it will be invoked with pairs as arguments
   to produce values of the resulting reducible.
   **/
@@ -26,6 +26,8 @@ function coreduction(left, right, assemble) {
     var state = initial
     var leftValue = nil
     var rightValue = nil
+    var leftEnded = false
+    var rightEnded = false
 
     function reducer(isLeft) {
       // create a reducer function for either left or right reducible.
@@ -36,9 +38,21 @@ function coreduction(left, right, assemble) {
         if (result) return result
         // If `end` or error value is yield store result and pass value down
         // the flow so that error / end can be handled.
-        if (value === end || isError(value)) {
+        if (isError(value)) {
           result = reduced(state)
           return next(value, state)
+        }
+
+        if (value === end) {
+          if (isLeft) leftEnded = true
+          else rightEnded = true
+
+          if (leftEnded && rightEnded) {
+            result = reduced(state)
+            return next(value, state)
+          } else {
+            return
+          }
         }
 
         // Update last value for the associated reducible.

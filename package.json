@@ -20,7 +20,8 @@
     "test": "~0.x.0",
     "phantomify": "~0.x.0",
     "repl-utils": "~2.0.1",
-    "reducers": "~2.0.0"
+    "reducers": "~2.0.0",
+    "reducible": "Raynos/reducible#1.x"
   },
   "main": "./coreduction.js",
   "scripts": {
@@ -36,7 +37,7 @@
       "url": "https://github.com/Gozala/coreduction/License.md"
     }
   ],
-  "dependencies": {
-    "reducible": "~1.0.1"
+  "peerDependencies": {
+    "reducible": "Raynos/reducible#1.x"
   }
 }

@@ -40,6 +40,8 @@ exports["test ignore values before both yielded"] = test(function(assert) {
   assert.ok(e2.isReduced, "right is reduced")
   assert.ok(!e1.isReduced, "left is not reduced")
 
+  e1.send(end)
+
   e1.send("l6")
 
   assert.ok(e1.isReduced, "next yield stops left")
@@ -47,7 +49,7 @@ exports["test ignore values before both yielded"] = test(function(assert) {
   e3.send(end)
 })
 
-exports["test either end ends coreduction"] = test(function(assert) {
+exports["test both end ends coreduction"] = test(function(assert) {
   var e1 = event()
   var e2 = event()
   var e3 = event()
@@ -71,9 +73,10 @@ exports["test either end ends coreduction"] = test(function(assert) {
   e1.send("l5")
   e2.send("r3")
   e1.send(end)
+  e2.send(end)
 
   assert.ok(e1.isReduced, "left is reduced")
-  assert.ok(!e2.isReduced, "right is not reduced")
+  assert.ok(e2.isReduced, "right is reduced")
 
   e2.send("r4")
 
@@ -219,6 +222,8 @@ exports["test manual assembly"] = test(function(assert) {
 
   assert.ok(e2.isReduced, "right is reduced")
   assert.ok(!e1.isReduced, "left is not reduced")
+
+  e1.send(end)
 
   e1.send("l6")
 
